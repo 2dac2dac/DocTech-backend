@@ -1,5 +1,6 @@
 package dac2dac.doctect.agency.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -11,11 +12,14 @@ import java.net.URL;
 public class HospitalService {
 
     // 병원 정보를 가져오는 메서드
-    public String getInfo() {
+
+    @Value("${spring.API-KEY.hospital-api-key}")
+    String hospitalApiKey;
+
+    public String getHospitalInfo() {
         try {
             // API 요청 URL 및 키
             String endpoint = "http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncLcinfoInqire?";
-            String apiKey = "oWY%2BYdEiTAhMkDZyS%2Fd%2BNoqY3DWC%2B4avf89bpSUqlFjebPiGet0kRez1aBFaIIaGmp7LrePALrS%2FtzQyfPKhBQ%3D%3D";
 
             // 요청 파라미터 설정
             String value1 = "127.085156592737";
@@ -30,7 +34,7 @@ public class HospitalService {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Content-Type", "application/json");
-            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
+            connection.setRequestProperty("Authorization", "Bearer " + hospitalApiKey);
 
             // 응답 코드 확인
             int responseCode = connection.getResponseCode();

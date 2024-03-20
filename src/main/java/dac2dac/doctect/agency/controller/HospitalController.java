@@ -19,7 +19,7 @@ public class HospitalController {
 
     @GetMapping("/hospital/info")
     public String hospitalInfo() {
-        System.out.println("hostpial_info" + hospitalService.getInfo());
-        return hospitalService.getInfo();
+
+        return hospitalService.getHospitalInfo();
     }
 }
