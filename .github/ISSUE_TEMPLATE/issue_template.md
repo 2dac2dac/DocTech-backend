@@ -1,9 +1,10 @@
 ---
 name: Issue template
 about: Suggest an idea for this project
-title: [label] title
-         ex) [Feat] 로그인 API 구현
-- labels, assignees, milestones 달기
+title: ''
+labels: ''
+assignees: ''
+
 ---
 
 ## 🔥 Issue
