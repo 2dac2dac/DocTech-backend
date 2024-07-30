@@ -72,10 +72,6 @@ public class NoncontactDiagReservation extends BaseEntity {
         this.status = status;
         this.isConsent = isConsent;
     }
-
-    public void cancelReservation() {
-        this.status = ReservationStatus.CANCEL;
-    }
 }
 
 

@@ -1,4 +1,4 @@
-package dac2dac.doctect.health_list.dto.response.healthScreening;
+package dac2dac.doctect.health_list.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Builder;

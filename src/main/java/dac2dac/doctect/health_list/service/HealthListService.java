@@ -8,21 +8,24 @@ import dac2dac.doctect.agency.entity.Hospital;
 import dac2dac.doctect.agency.entity.Pharmacy;
 import dac2dac.doctect.agency.repository.HospitalRepository;
 import dac2dac.doctect.agency.repository.PharmacyRepository;
-import dac2dac.doctect.bootpay.entity.PaymentInfo;
 import dac2dac.doctect.common.constant.ErrorCode;
 import dac2dac.doctect.common.error.exception.NotFoundException;
 import dac2dac.doctect.common.error.exception.UnauthorizedException;
-import dac2dac.doctect.doctor.entity.Doctor;
-import dac2dac.doctect.doctor.repository.DoctorRepository;
 import dac2dac.doctect.health_list.dto.request.DiagnosisDto;
 import dac2dac.doctect.health_list.dto.request.HealthScreeningDto;
 import dac2dac.doctect.health_list.dto.request.PrescriptionDto;
 import dac2dac.doctect.health_list.dto.request.UserAuthenticationDto;
 import dac2dac.doctect.health_list.dto.request.VaccinationDto;
-import dac2dac.doctect.health_list.dto.response.healthScreening.DoctorInfo;
+import dac2dac.doctect.health_list.dto.response.DoctorInfo;
 import dac2dac.doctect.health_list.dto.response.HostpitalInfo;
 import dac2dac.doctect.health_list.dto.response.PharmacyInfo;
-import dac2dac.doctect.health_list.dto.response.diagnosis.*;
+import dac2dac.doctect.health_list.dto.response.diagnosis.ContactDiagDetailDto;
+import dac2dac.doctect.health_list.dto.response.diagnosis.ContactDiagItem;
+import dac2dac.doctect.health_list.dto.response.diagnosis.ContactDiagItemList;
+import dac2dac.doctect.health_list.dto.response.diagnosis.DiagDetailInfo;
+import dac2dac.doctect.health_list.dto.response.diagnosis.DiagnosisListDto;
+import dac2dac.doctect.health_list.dto.response.diagnosis.NoncontactDiagItem;
+import dac2dac.doctect.health_list.dto.response.diagnosis.NoncontactDiagItemList;
 import dac2dac.doctect.health_list.dto.response.healthScreening.BloodTestInfo;
 import dac2dac.doctect.health_list.dto.response.healthScreening.HealthScreeningDetailDto;
 import dac2dac.doctect.health_list.dto.response.healthScreening.HealthScreeningInfo;
@@ -53,14 +56,11 @@ import dac2dac.doctect.health_list.repository.PrescriptionDrugRepository;
 import dac2dac.doctect.health_list.repository.PrescriptionRepository;
 import dac2dac.doctect.health_list.repository.VaccinationRepository;
 import dac2dac.doctect.mydata.repository.MydataJdbcRepository;
-import dac2dac.doctect.noncontact_diag.entity.NoncontactDiag;
-import dac2dac.doctect.noncontact_diag.entity.Symptom;
-import dac2dac.doctect.noncontact_diag.repository.NoncontactDiagRepository;
-import dac2dac.doctect.review.repository.ReviewRepository;
 import dac2dac.doctect.user.entity.User;
 import dac2dac.doctect.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -76,15 +76,12 @@ public class HealthListService {
     private final MydataJdbcRepository mydataJdbcRepository;
     private final UserRepository userRepository;
     private final ContactDiagRepository contactDiagRepository;
-    private final NoncontactDiagRepository noncontactDiagRepository;
     private final PrescriptionRepository prescriptionRepository;
     private final HealthScreeningRepository healthScreeningRepository;
     private final VaccinationRepository vaccinationRepository;
     private final HospitalRepository hospitalRepository;
     private final PharmacyRepository pharmacyRepository;
     private final PrescriptionDrugRepository prescriptionDrugRepository;
-    private final ReviewRepository reviewRepository;
-    private final DoctorRepository doctorRepository;
 
     @Transactional
     public void syncMydata(UserAuthenticationDto userAuthenticationDto, Long userId) {
@@ -149,27 +146,7 @@ public class HealthListService {
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
         //* 비대면 진료 내역
-        List<NoncontactDiagItem> noncontactDiagItemList = noncontactDiagRepository.findByUserId(userId)
-            .stream()
-            .map(nc -> {
-                int reviewCnt = reviewRepository.findByDoctorId(nc.getDoctor().getId()).size();
-
-                LocalDateTime diagDateTime = LocalDateTime.of(nc.getDiagDate(), nc.getDiagTime());
-                return NoncontactDiagItem.builder()
-                    .diagId(nc.getId())
-                    .diagDate(diagDateTime)
-                    .doctorName(nc.getDoctor().getName())
-                    .doctorHostpital(nc.getDoctor().getHospital().getName())
-                    .doctorThumnail(nc.getDoctor().getProfileImagePath())
-                    .reviewCnt(reviewCnt)
-                    .doctorAverageRating(nc.getDoctor().getAverageRating())
-                    .doctorIsOpenNow(isAgencyOpenNow(nc.getDoctor().getDiagTime()))
-                    .doctorTodayOpenTime(findTodayOpenTime(nc.getDoctor().getDiagTime()))
-                    .doctorTodayCloseTime(findTodayCloseTime(nc.getDoctor().getDiagTime()))
-                    .build();
-            })
-            .sorted(Comparator.comparing(NoncontactDiagItem::getDiagDate).reversed())
-            .collect(Collectors.toList());
+        List<NoncontactDiagItem> noncontactDiagItemList = new ArrayList<>();
 
         NoncontactDiagItemList noncontactDiagItemListDto = NoncontactDiagItemList.builder()
             .totalCnt(noncontactDiagItemList.size())
@@ -226,7 +203,7 @@ public class HealthListService {
             .findFirst()
             .orElseThrow(() -> new NotFoundException(ErrorCode.HOSPITAL_NOT_FOUND));
 
-        //* 진료 기관 정보
+        //* 진료 기관
         HostpitalInfo hospitalInfo = HostpitalInfo.builder()
             .diagDate(findContactDiag.getDiagDate())
             .agencyName(findHospital.getName())
@@ -248,50 +225,6 @@ public class HealthListService {
             .agencyInfo(hospitalInfo)
             .diagDetailInfo(diagDetailInfo)
             .build();
-    }
-
-    public NoncontactDiagDetailDto getDetailNoncontactDiagnosis(Long userId, Long diagId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        NoncontactDiag findNoncontactDiag = noncontactDiagRepository.findById(diagId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NONCONTACT_DIAGNOSIS_NOT_FOUND));
-
-        //* 유저와 조회한 진료 내역에 해당하는 유저가 다를 경우에 대한 예외처리를 수행한다.
-        if (!user.getId().equals(findNoncontactDiag.getUser().getId())) {
-            new UnauthorizedException(ErrorCode.UNAUTHORIZED);
-        }
-
-        Doctor findDoctor = findNoncontactDiag.getDoctor();
-
-        //* 의사 정보
-        NoncontactDoctorInfo noncontactDoctorInfo = NoncontactDoctorInfo.builder()
-                .doctorId(findDoctor.getId())
-                .diagDate(LocalDateTime.of(findNoncontactDiag.getDiagDate(), findNoncontactDiag.getDiagTime()))
-                .doctorName(findDoctor.getName())
-                .doctorHospitalName(findDoctor.getHospital().getName())
-                .doctorIsOpenNow(isAgencyOpenNow(findDoctor.getDiagTime()))
-                .doctorTodayOpenTime(findTodayOpenTime(findDoctor.getDiagTime()))
-                .doctorTodayCloseTime(findTodayCloseTime(findDoctor.getDiagTime()))
-                .build();
-
-        Symptom findSymptom = findNoncontactDiag.getNoncontactDiagReservation().getSymptom();
-        PaymentInfo findPaymentInfo = findNoncontactDiag.getPaymentInfo();
-
-        //* 비대면 진료 세부 정보
-        NoncontactDiagDetailInfo noncontactDiagDetailInfo = NoncontactDiagDetailInfo.builder()
-                .isPrescribedDrug(findSymptom.getIsPrescribedDrug())
-                .isAllergicSymptom(findSymptom.getIsAllergicSymptom())
-                .isInbornDisease(findSymptom.getIsInbornDisease())
-                .price(findPaymentInfo.getPrice())
-                .paymentType(findPaymentInfo.getPaymentMethod().getPaymentType().getPaymentTypeName())
-                .approvalDate(findPaymentInfo.getCreateDate())
-                .build();
-
-        return NoncontactDiagDetailDto.builder()
-                .noncontactDoctorInfo(noncontactDoctorInfo)
-                .noncontactDiagDetailInfo(noncontactDiagDetailInfo)
-                .build();
     }
 
     public PrescriptionItemListDto getPrescriptionList(Long userId) {

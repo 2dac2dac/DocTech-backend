@@ -15,7 +15,6 @@ public enum ErrorCode {
     RESERVATION_DATE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "진료 예약이 가능한 날짜가 아닙니다."),
     RESERVATION_TIME_BAD_REQUEST(HttpStatus.BAD_REQUEST, "선택한 의사가 가능한 진료 예약 시간이 아닙니다."),
     CONSENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "사용자로부터 필수 약관 동의를 받지 못했습니다."),
-    CANCELED_FORM_BAD_REQUEST(HttpStatus.BAD_REQUEST, "예약취소 상태의 비대면 진료 예약 신청서입니다."),
 
     /**
      * 401 Unauthorized
@@ -39,8 +38,6 @@ public enum ErrorCode {
     PAYMENT_METHOD_NOT_FOUND(HttpStatus.NOT_FOUND, "결제수단을 찾을 수 없습니다."),
 
     CONTACT_DIAGNOSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ID에 해당하는 대면 진료 내역을 찾을 수 없습니다."),
-    NONCONTACT_DIAGNOSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "ID에 해당하는 비대면 진료 내역을 찾을 수 없습니다."),
-    NONCONTACT_DIAGNOSIS_RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "ID에 해당하는 비대면 진료 예약 내역을 찾을 수 없습니다."),
     PRESCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "ID에 해당하는 투약 내역을 찾을 수 없습니다."),
     VACCINATION_NOT_FOUND(HttpStatus.NOT_FOUND, "ID에 해당하는 예방접종 내역을 찾을 수 없습니다."),
     HEALTHSCREENING_NOT_FOUND(HttpStatus.NOT_FOUND, "ID에 해당하는 건강검진 내역을 찾을 수 없습니다."),

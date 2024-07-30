@@ -15,7 +15,16 @@ import dac2dac.doctect.doctor.repository.DepartmentRepository;
 import dac2dac.doctect.doctor.repository.DepartmentTagRepository;
 import dac2dac.doctect.doctor.repository.DoctorRepository;
 import dac2dac.doctect.noncontact_diag.dto.request.NoncontactDiagAppointmentRequestDto;
-import dac2dac.doctect.noncontact_diag.dto.response.*;
+import dac2dac.doctect.noncontact_diag.dto.response.DepartmentInfo;
+import dac2dac.doctect.noncontact_diag.dto.response.DepartmentListDto;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorDto;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorInfo;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorIntroduction;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorItem;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorListDto;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorReview;
+import dac2dac.doctect.noncontact_diag.dto.response.DoctorReviewList;
+import dac2dac.doctect.noncontact_diag.dto.response.Top3ReviewTagInfo;
 import dac2dac.doctect.noncontact_diag.entity.NoncontactDiagReservation;
 import dac2dac.doctect.noncontact_diag.entity.Symptom;
 import dac2dac.doctect.noncontact_diag.entity.constant.ReservationStatus;
@@ -30,7 +39,6 @@ import dac2dac.doctect.user.entity.User;
 import dac2dac.doctect.bootpay.repository.PaymentMethodRepository;
 import dac2dac.doctect.user.repository.UserRepository;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -212,7 +220,7 @@ public class NoncontactDiagService {
 
         //* 동의 여부 확인
         if (!requestDto.getIsConsent()) {
-            throw new BadRequestException(ErrorCode.CONSENT_BAD_REQUEST);
+            new BadRequestException(ErrorCode.CONSENT_BAD_REQUEST);
         }
 
         Symptom symptom = Symptom.builder()
@@ -240,74 +248,6 @@ public class NoncontactDiagService {
             .build();
 
         noncontactDiagReservationRepository.save(noncontactDiagReservation);
-    }
-
-    public void cancelNoncontactDiag(Long userId, Long diagId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        NoncontactDiagReservation findNoncontactDiagReservation = noncontactDiagReservationRepository.findById(diagId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NONCONTACT_DIAGNOSIS_RESERVATION_NOT_FOUND));
-
-        //* 유저와 조회한 진료 내역에 해당하는 유저가 다를 경우에 대한 예외처리를 수행한다.
-        if (!user.getId().equals(findNoncontactDiagReservation.getUser().getId())) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
-        }
-
-        findNoncontactDiagReservation.cancelReservation();
-        noncontactDiagReservationRepository.save(findNoncontactDiagReservation);
-    }
-
-    public NoncontactDiagFormDto getNoncontactDiagForm(Long userId, Long diagId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-
-        NoncontactDiagReservation findNoncontactDiagReservation = noncontactDiagReservationRepository.findById(diagId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NONCONTACT_DIAGNOSIS_RESERVATION_NOT_FOUND));
-
-        //* 유저와 조회한 진료 내역에 해당하는 유저가 다를 경우에 대한 예외처리를 수행한다.
-        if (!user.getId().equals(findNoncontactDiagReservation.getUser().getId())) {
-            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
-        }
-
-        //* 예약한 비대면 진료의 상태가 예약 취소인 경우에 대한 예외처리를 수행한다.
-        if (findNoncontactDiagReservation.getStatus() == ReservationStatus.CANCEL) {
-            throw new BadRequestException(ErrorCode.CANCELED_FORM_BAD_REQUEST);
-        }
-
-        Doctor findDoctor = findNoncontactDiagReservation.getDoctor();
-
-        //* 의사 정보
-        NoncontactDiagFormDoctorInfo noncontactDiagFormDoctorInfo = NoncontactDiagFormDoctorInfo.builder()
-                .doctorId(findDoctor.getId())
-                .doctorName(findDoctor.getName())
-                .doctorHospitalName(findDoctor.getHospital().getName())
-                .doctorIsOpenNow(isAgencyOpenNow(findDoctor.getDiagTime()))
-                .doctorTodayOpenTime(findTodayOpenTime(findDoctor.getDiagTime()))
-                .doctorTodayCloseTime(findTodayCloseTime(findDoctor.getDiagTime()))
-                .build();
-
-        Symptom findSymptom = findNoncontactDiagReservation.getSymptom();
-
-        //* 예약 신청 세부 정보
-        NoncontactDiagFormInfo noncontactDiagFormInfo = NoncontactDiagFormInfo.builder()
-                .signupDate(findNoncontactDiagReservation.getCreateDate())
-                .reservationDate(LocalDateTime.of(findNoncontactDiagReservation.getReservationDate(), findNoncontactDiagReservation.getReservationTime()))
-                .department(findDoctor.getDepartment().getDepartmentName())
-                .diagType(findNoncontactDiagReservation.getDiagType().getNoncontactDiagTypeName())
-                .isPrescribedDrug(findSymptom.getIsPrescribedDrug())
-                .prescribedDrug(findSymptom.getPrescribedDrug())
-                .isAllergicSymptom(findSymptom.getIsAllergicSymptom())
-                .allergicSymptom(findSymptom.getAllergicSymptom())
-                .isInbornDisease(findSymptom.getIsInbornDisease())
-                .inbornDisease(findSymptom.getInbornDisease())
-                .additionalInformation(findSymptom.getAdditionalInformation())
-                .build();
-
-        return NoncontactDiagFormDto.builder()
-                .noncontactFormDoctorInfo(noncontactDiagFormDoctorInfo)
-                .noncontactDiagFormInfo(noncontactDiagFormInfo)
-                .build();
     }
 
     public static void isValidReservation(LocalDate reservationDate, LocalTime reservationTime, DiagTime diagTime) {

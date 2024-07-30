@@ -42,12 +42,6 @@ public class HealthListController {
         return ApiResult.success(SuccessCode.GET_SUCCESS, healthListService.getDetailContactDiagnosis(userId, diagId));
     }
 
-    @Operation(summary = "진료 내역(비대면) 상세 조회 API", description = "유저의 진료 내역(비대면)을 상세 조회한다.")
-    @GetMapping("/diagnosis/noncontact/{userId}/{diagId}")
-    public ApiResult getNoncontactDiagnosis(@PathVariable Long userId, @PathVariable Long diagId) {
-        return ApiResult.success(SuccessCode.GET_SUCCESS, healthListService.getDetailNoncontactDiagnosis(userId, diagId));
-    }
-
     @Operation(summary = "투약 내역 조회 API", description = "유저의 투약 내역을 조회한다.")
     @GetMapping("/prescription/{userId}")
     public ApiResult getPrescriptionList(@PathVariable Long userId) {

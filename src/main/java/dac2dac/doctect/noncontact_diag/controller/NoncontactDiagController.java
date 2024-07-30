@@ -8,9 +8,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "비대면 진료", description = "비대면 진료 API")
+@Tag(name = "비대면진료", description = "비대면진료 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/noncontactDiag")
@@ -36,7 +41,7 @@ public class NoncontactDiagController {
         return ApiResult.success(SuccessCode.GET_SUCCESS, noncontactDiagService.getDoctorDetailInfo(doctorId));
     }
 
-    @Operation(summary = "비대면 진료 예약 신청 API", description = "환자가 비대면 진료 예약을 신청한다.")
+    @Operation(summary = "비대면진료 신청 API", description = "환자가 비대면 진료를 신청한다.")
     @PostMapping("/{userId}")
     public ApiResult appointNoncontactDiag(
         @PathVariable Long userId,
@@ -44,19 +49,6 @@ public class NoncontactDiagController {
     ) {
         noncontactDiagService.appointNoncontactDiag(userId, requestDto);
         return ApiResult.success(SuccessCode.CREATED_SUCCESS);
-    }
-
-    @Operation(summary = "비대면 진료 예약 취소 API", description = "예약했던 비대면 진료를 예약 취소한다.")
-    @DeleteMapping("/{userId}/{diagId}")
-    public ApiResult cancelNoncontactDiag(@PathVariable Long userId, @PathVariable Long diagId) {
-        noncontactDiagService.cancelNoncontactDiag(userId, diagId);
-        return ApiResult.success(SuccessCode.DELETE_SUCCESS);
-    }
-
-    @Operation(summary = "예약 신청서 조회 API", description = "예약한 비대면 진료에 대한 예약 신청서를 조회한다.")
-    @GetMapping("/form/{userId}/{diagId}")
-    public ApiResult getNoncontactDiagForm(@PathVariable Long userId, @PathVariable Long diagId) {
-        return ApiResult.success(SuccessCode.GET_SUCCESS, noncontactDiagService.getNoncontactDiagForm(userId, diagId));
     }
 
 }

@@ -17,9 +17,4 @@ public class ContactDiagDetailDto {
         this.agencyInfo = agencyInfo;
         this.diagDetailInfo = diagDetailInfo;
     }
-
-    @Getter
-    @NoArgsConstructor
-    public static class NondiagDoctorInfo {
-    }
 }
