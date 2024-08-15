@@ -17,17 +17,14 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
-
     private String username;
     private String email;
     private String phoneNumber;
-
     private String code; // 구글, 카카오의 로그아웃, 탈퇴를 위한 코드
-
     private Double longitude;
     private Double latitude;
-
     private String password;
+
 
     public void setLocation(Double longitude, Double latitude) {
         this.longitude = longitude;
@@ -44,21 +41,25 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public String getName() {
-        return username; // 비밀번호를 반환하는 메서드
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setCode(String code) {
-        this.code=code;
+    public void setSocialType(SocialType socialType) {
+        this.socialType = socialType;
     }
 
-    public void setSocialType(SocialType socialType) {this.socialType = socialType;}
+
 }

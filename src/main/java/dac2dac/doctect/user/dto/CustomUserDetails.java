@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
@@ -15,10 +16,10 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(User user) {
         this.user = user;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return List.of();
+        return Collections.emptyList(); // 권한 로직 필요
     }
 
     @Override
@@ -31,24 +32,35 @@ public class CustomUserDetails implements UserDetails {
         return user.getUsername();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    public String getPhoneNumber() {
+        return user.getPhoneNumber();
+    }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true; // 비즈니스 로직에 맞게 수정 필요
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true; // 비즈니스 로직에 맞게 수정 필요
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true; // 비즈니스 로직에 맞게 수정 필요
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true; // 비즈니스 로직에 맞게 수정 필요
     }
 }
