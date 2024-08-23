@@ -30,11 +30,12 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             // Request에서 Authorization 헤더를 찾음
             String authorization = request.getHeader("Authorization");
-            logger.debug("Authorization Header: {}", authorization);
+            System.out.println("Authorization Header"+ authorization);
 
             // Authorization 헤더 검증
             if (authorization == null || !authorization.startsWith("Bearer ")) {
-                logger.debug("No Bearer token found in Authorization header.");
+                System.out.println("여기로 들어오면 안되는데");
+                System.out.println("Authoriazion"+ authorization);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -43,26 +44,26 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // Bearer 부분 제거 후 순수 토큰만 획득
             String token = authorization.substring(7); // Bearer 다음부터 토큰
+            System.out.println("token::" + token);
 
             // 토큰 소멸 시간 검증
             if (jwtUtil.isExpired(token)) {
-                logger.warn("Token has expired.");
+                System.out.println("Token이 만료됨");
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            logger.debug("Token is valid and not expired.");
+            System.out.println("Token is valid and not expired.");
 
             // 토큰에서 username과 id 획득
             String username = jwtUtil.getUsername(token);
-            Long id = jwtUtil.getId(token);
 
-            logger.debug("Token parsed successfully. Username: {}, ID: {}", username, id);
+
+            System.out.println("Token parsed successfully. Username: {}, ID: {}"+username);
 
             // UserEntity를 생성하여 값 set
             User userEntity = new User();
             userEntity.setUsername(username);
-            userEntity.setId(id);
 
             // UserDetails에 회원 정보 객체 담기
             CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
@@ -73,7 +74,7 @@ public class JWTFilter extends OncePerRequestFilter {
             // 세션에 사용자 등록
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            logger.debug("User authenticated and set in SecurityContext.");
+            System.out.println("User authenticated and set in SecurityContext.");
 
         } catch (Exception e) {
             logger.error("Error processing JWT token: {}", e.getMessage(), e);

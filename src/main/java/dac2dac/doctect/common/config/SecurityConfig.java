@@ -3,6 +3,7 @@ package dac2dac.doctect.common.config;
 import dac2dac.doctect.user.jwt.JWTFilter;
 import dac2dac.doctect.user.jwt.JWTUtil;
 import dac2dac.doctect.user.jwt.LoginFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
 
+
     public SecurityConfig(JWTUtil jwtUtil, AuthenticationConfiguration authenticationConfiguration) {
         this.jwtUtil = jwtUtil;
         this.authenticationConfiguration = authenticationConfiguration;
@@ -38,11 +40,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .formLogin(formLogin -> formLogin.disable()) // Form-based 로그인 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable()) // Basic 인증 비활성화
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/login/**","/test","/").permitAll() // 특정 경로는 인증 없이 허용
+                        .anyRequest().authenticated()) // 나머지 요청은 인증 필요
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless 세션 정책 설정
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/login/**","/api/v1/register").permitAll() // 특정 경로는 인증 없이 허용
-                        .anyRequest().authenticated()) // 나머지 요청은 인증 필요
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);// JWT 필터 추가
 
 

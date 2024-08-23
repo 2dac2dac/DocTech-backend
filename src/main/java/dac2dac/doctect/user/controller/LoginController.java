@@ -60,7 +60,7 @@ public class LoginController {
     }
 
 
-    @PostMapping("/api/v1/login/test")
+    @GetMapping("/api/v1/login/test")
     public String getProtectedResource() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

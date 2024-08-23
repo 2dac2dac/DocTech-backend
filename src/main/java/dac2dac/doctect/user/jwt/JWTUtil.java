@@ -25,11 +25,7 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
-    public Long getId(String token) {
 
-        String id =Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", String.class);
-        return Long.parseLong(id);
-    }
 
 
     public Boolean isExpired(String token) {
