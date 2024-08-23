@@ -24,19 +24,8 @@ public class JWTUtil {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
-    public String getId(String token) {
 
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", String.class);
-    }
 
-    public String getPhoneNumber(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("PhoneNumber", String.class);
-    }
-    public String getEmail(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
-    }
 
 
     public Boolean isExpired(String token) {
@@ -46,13 +35,10 @@ public class JWTUtil {
 
 
     // JWT 토큰 생성하기
-    //String token = jwtUtil.createJwt(username, email, phoneNumber,id, 60*60*10L);
-    public String createJwt(String username,String id,String PhoneNumber, String email,  Long expiredMs) {
+    public String createJwt(String username,Long id, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("id",id)
-                .claim("email",email)
-                .claim ("PhoneNumber", PhoneNumber)
                 .claim("username", username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))

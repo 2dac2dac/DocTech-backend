@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin.disable()) // Form-based 로그인 비활성화
                 .httpBasic(httpBasic -> httpBasic.disable()) // Basic 인증 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/login/**","/test","/api/v1/register").permitAll() // 특정 경로는 인증 없이 허용
+                        .requestMatchers("/api/v1/login/**","/test","/").permitAll() // 특정 경로는 인증 없이 허용
                         .anyRequest().authenticated()) // 나머지 요청은 인증 필요
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless 세션 정책 설정
