@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jdk.jshell.spi.ExecutionControl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,7 +45,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // Bearer 부분 제거 후 순수 토큰만 획득
             String token = authorization.substring(7); // Bearer 다음부터 토큰
-            System.out.println("token::" + token);
+
 
             // 토큰 소멸 시간 검증
             if (jwtUtil.isExpired(token)) {
@@ -57,6 +58,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // 토큰에서 username과 id 획득
             String username = jwtUtil.getUsername(token);
+            String id = jwtUtil.getId(token);
+            String PhoneNumber = jwtUtil.getPhoneNumber(token);
+            String email = jwtUtil.getEmail(token);
 
 
             System.out.println("Token parsed successfully. Username: {}, ID: {}"+username);
@@ -64,6 +68,9 @@ public class JWTFilter extends OncePerRequestFilter {
             // UserEntity를 생성하여 값 set
             User userEntity = new User();
             userEntity.setUsername(username);
+            userEntity.setEmail(email);
+            userEntity.setPhoneNumber(PhoneNumber);
+            userEntity.setId(id);
 
             // UserDetails에 회원 정보 객체 담기
             CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);

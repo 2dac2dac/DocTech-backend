@@ -53,9 +53,10 @@ public class User extends BaseEntity {
         this.email = email;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = Long.parseLong(id);
     }
+
 
     public void setSocialType(SocialType socialType) {
         this.socialType = socialType;

@@ -89,7 +89,7 @@ public class UserService {
         User user = userRepository.findByUsername(username);
         if (authenticate) {
             // DB에서 조회한 사용자 ID를 사용하여 JWT 생성
-            return jwtUtil.createJwt(username, user.getId(), 3600000L); // 1시간 유효한 토큰 생성
+            return jwtUtil.createJwt(username, user.getId().toString(), user.getPhoneNumber(), user.getEmail(), 36000L); // 1시간 유효한 토큰 생성
         } else {
             throw new RuntimeException("Invalid username or password");
         }
