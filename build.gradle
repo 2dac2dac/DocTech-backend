@@ -43,6 +43,10 @@ dependencies {
     // 메일
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+    // timelead
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'

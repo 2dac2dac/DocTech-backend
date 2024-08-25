@@ -1,4 +1,4 @@
-package dac2dac.doctect.config;
+package dac2dac.doctect.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,13 +9,14 @@ import java.util.Properties;
 
 @Configuration
 public class MailConfig {
-    @Bean
+
+    @Bean(name = "javaMailSender")
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
         javaMailSender.setHost("smtp.naver.com");
         javaMailSender.setUsername("nowee018");
-        javaMailSender.setPassword("soo*285211");
+        javaMailSender.setPassword("soo*285211!");
 
         javaMailSender.setPort(465);
 
