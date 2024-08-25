@@ -24,4 +24,9 @@ public class EmailController {
         String authCode = mailService.sendEmail(emailDto.getEmail());
         return authCode;
     }
+
+    @PostMapping("/api/v1/login/verifyAuthCode")
+    public boolean verifyAuthCode(@RequestBody EmailAuthRequestDto emailDto) {
+        return mailService.verifyAuthCode(emailDto.getEmail(), emailDto.getAuthCode());
+    }
 }
