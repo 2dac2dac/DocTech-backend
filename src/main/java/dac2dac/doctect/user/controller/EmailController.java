@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,5 +23,10 @@ public class EmailController {
 
         String authCode = mailService.sendEmail(emailDto.getEmail());
         return authCode;
+    }
+
+    @PostMapping("/api/v1/login/verifyAuthCode")
+    public boolean verifyAuthCode(@RequestBody EmailAuthRequestDto emailDto) {
+        return mailService.verifyAuthCode(emailDto.getEmail(), emailDto.getAuthCode());
     }
 }
