@@ -22,7 +22,6 @@ import java.util.Map;
 
 @Tag(name = "유저", description = "회원가입")
 @RestController
-@CrossOrigin(origins = "http://192.168.219.136:8081") // Expo 개발 서버 주소
 public class LoginController {
 
     @Autowired
