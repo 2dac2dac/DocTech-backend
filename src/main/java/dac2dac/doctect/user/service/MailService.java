@@ -1,6 +1,7 @@
 package dac2dac.doctect.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -18,6 +19,8 @@ public class MailService {
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
     private String authNum; //랜덤 인증 코드
+    @Value("${spring.mail.username}")
+    private String host;
 
     //랜덤 인증 코드 생성
     public void createCode() {
@@ -45,9 +48,10 @@ public class MailService {
     //메일 양식 작성
     public MimeMessage createEmailForm(String email) throws MessagingException, UnsupportedEncodingException {
         createCode(); //인증 코드 생성
-        String setFrom = "nowee018@naver.com"; // 보낼 사람의 이메일 주소
+
+        String setFrom = host; // 보낼 사람의 이메일 주소
         String toEmail = email; // 받는 사람의 이메일 주소
-        String title = "CODEBOX 회원가입 인증 번호"; // 이메일 제목
+        String title = "Doc'Tech 인증 번호"; // 이메일 제목
 
         MimeMessage message = emailSender.createMimeMessage();
         message.addRecipients(MimeMessage.RecipientType.TO, email); // 보낼 이메일 설정
