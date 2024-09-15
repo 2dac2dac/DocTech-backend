@@ -1,5 +1,7 @@
 ### resources ###
 src/main/resources
+!src/main/resources/keypad/
+!src/main/resources/keypad/**
 
 HELP.md
 .gradle
