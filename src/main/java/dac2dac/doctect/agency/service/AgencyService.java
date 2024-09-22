@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import org.springframework.data.domain.PageRequest;
@@ -255,10 +256,10 @@ public class AgencyService {
     }
 
     public List<HospitalDto> getAllHospitals() {
-        Pageable pageable = PageRequest.of(0, 100); // 첫 번째 페이지, 100개
-        List<Hospital> hospitals = hospitalRepository.findAll();
+        Pageable pageable = PageRequest.of(0,100); // Create a Pageable instance with the provided page and size
+        Page<Hospital> hospitalPage = hospitalRepository.findAll(pageable); // Fetch the hospitals with pagination
 
-        return hospitals.stream()
+        return hospitalPage.getContent().stream() // Get the content (list of hospitals) from the page
                 .map(hospital -> HospitalDto.builder()
                         .id(hospital.getId())
                         .name(hospital.getName())
@@ -266,6 +267,7 @@ public class AgencyService {
                         .build())
                 .collect(Collectors.toList());
     }
+
 
 
 }
