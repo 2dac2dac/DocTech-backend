@@ -15,12 +15,12 @@
 ## 🎬 Doc'tech 시연영상
 <div align="center">
     
-| 환자 | 의사|
-|--------|------- |
-| <img style="width: 200px; height: auto;" src= "https://github.com/user-attachments/assets/eff53cf7-defd-48c2-8f87-e7735278b6f0"> | <img style="width: 200px; height: auto;" src= "https://github.com/user-attachments/assets/b8e2a444-13ec-4391-b2be-0bbe8a8d27c5"> |
+| [😷 환자 시연영상 ](https://github.com/user-attachments/assets/7925b290-da76-494f-97a3-a65a3decab5f) |  [👨‍⚕️ 의사 시연영상 ](https://github.com/user-attachments/assets/7925b290-da76-494f-97a3-a65a3decab5f) |
+|--|--|
 
 </div>
 <br>
+
 
 ## 🔍 Main Features
 ### 1️⃣ 의료 마이데이터 연동
