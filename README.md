@@ -9,8 +9,16 @@
 기존 비대면 진료에서는 과도한 개인 진료 서류 제출, 신속한 처방의 어려움, 불필요한 개인정보 노출 등의 문제가 있었습니다. <br>
 이를 해결하기 위해 의료 마이데이터를 활용하여 환자가 자신의 건강 상태를 효율적으로 관리하고, <br>이를 바탕으로 비대면 진료 서비스에서 정확한 진단을 받을 수 있도록 지원합니다.
 
-  [🎬 Doc'tech 시연영상 🎬]()
-  
+</div>
+<br>
+
+## 🎬 Doc'tech 시연영상
+<div align="center">
+    
+| 환자 | 의사|
+|--------|------- |
+| <img style="width: 200px; height: auto;" src= "https://github.com/user-attachments/assets/eff53cf7-defd-48c2-8f87-e7735278b6f0"> | <img style="width: 200px; height: auto;" src= "https://github.com/user-attachments/assets/b8e2a444-13ec-4391-b2be-0bbe8a8d27c5"> |
+
 </div>
 <br>
 
